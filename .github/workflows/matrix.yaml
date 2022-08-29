@@ -42,6 +42,37 @@ jobs:
                libmath-random-isaac-perl
                libjson-xs-perl
                libdbd-mysql-perl
+               libgd-perl
+               libchart-perl
+               libtemplate-plugin-gd-perl
+               libgd-text-perl
+               libgd-graph-perl
+               libmime-tools-perl
+               libwww-perl
+               libxml-twig-perl
+               libnet-ldap-perl
+               libauthen-sasl-perl
+               libnet-smtp-ssl-perl
+               libauthen-radius-perl
+               libsoap-lite-perl
+               libxmlrpc-lite-perl
+               libjson-rpc-perl
+               libtest-taint-perl
+               libhtml-parser-perl
+               libhtml-scrubber-perl
+               libencode-perl
+               libencode-detect-perl
+               libemail-reply-perl
+               libhtml-formattext-withlinks-perl
+               libtheschwartz-perl
+               libdaemon-generic-perl
+               libapache2-mod-perl2
+               libapache2-mod-perl2-dev
+               libfile-mimeinfo-perl
+               libio-stringy-perl
+               libcache-memcached-perl
+               libfile-copy-recursive-perl
+               libfile-which-perl
 
       - if: ${{ contains(matrix.docker, 'fedora') }}
         name: Install Bugzilla depencencies
