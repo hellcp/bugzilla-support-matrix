@@ -36,6 +36,7 @@ jobs:
                libemail-mime-perl
                libemail-mime-modifier-perl
                libdbi-perl
+               libdbix-connector-perl
                libdbd-mysql-perl
                libcgi-pm-perl
                libmath-random-isaac-perl
