@@ -90,6 +90,7 @@ jobs:
                'perl(DateTime)'
                'perl(DateTime::TimeZone)'
                'perl(DBI)'
+               'perl(DBD::MySQL)'
                'perl(Digest::SHA)'
                'perl(Email::MIME)'
                'perl(Email::Sender)'
