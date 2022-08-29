@@ -154,7 +154,7 @@ jobs:
 
       - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
         name: Enable apache modules
-        run: a2enmod cgi headers expires
+        run: a2enmod cgi headers expires rewrite
 
       - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
         name: Add the bugzilla site
