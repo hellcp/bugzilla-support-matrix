@@ -85,6 +85,7 @@ jobs:
                httpd-devel
                mariadb-devel
                gcc
+               'perl(autodie)'
                'perl(CGI)'
                'perl(Date::Format)'
                'perl(DateTime)'
