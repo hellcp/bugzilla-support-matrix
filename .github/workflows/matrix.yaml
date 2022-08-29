@@ -14,13 +14,11 @@ jobs:
     strategy:
       matrix:
         docker: ['debian', 'ubuntu', 'fedora']
-        version: ['release-4.4-stable', 'release-5.0-stable', '5.2']
+        version: ['release-4.4-stable', 'release-5.0-stable']
         root: ['/var/www/html/bugzilla/']
         exclude:
           - docker: 'debian'
             version: 'release-4.4-stable'
-          - docker: 'ubuntu'
-            version: '5.2'
 
     container: ${{ matrix.docker }}
 
