@@ -136,7 +136,7 @@ jobs:
                'perl(XMLRPC::Lite)'
                'perl(XML::Twig)'
 
-      - if: ${{ contains(matrix.docker, 'fedora') ) }}
+      - if: ${{ contains(matrix.docker, 'fedora') }}
         name: Install extra optional Bugzilla depencencies
         run: dnf -y install
                'perl(Chart::Lines)'
