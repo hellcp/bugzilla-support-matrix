@@ -22,7 +22,7 @@ jobs:
     steps:
       - if: ${{ contains(matrix.docker, 'centos') }}
         name: Add epel to centos
-        run: dnf config-manager --set-enabled powertools && dnf install epel-release epel-next-release
+        run: dnf -y config-manager --set-enabled powertools && dnf -y install epel-release epel-next-release
 
       - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
         name: Install Bugzilla depencencies
