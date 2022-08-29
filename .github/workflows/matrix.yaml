@@ -34,6 +34,7 @@ jobs:
                libdatetime-timezone-perl
                libdbi-perl
                libtemplate-perl
+               libemail-address-perl
                libemail-sender-perl
                libemail-mime-perl
                liburi-perl
