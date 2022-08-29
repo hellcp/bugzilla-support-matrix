@@ -168,7 +168,11 @@ jobs:
 
       - if: ${{ contains(matrix.docker, 'fedora') }}
         name: Prepare the database
-        run: su -c "mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh mysql
+        run: su -c "mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql && mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh mysql
+
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Prepare the database
+        run: su -c "mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh root
 
       - name: Create bugs user with password
         run: |
