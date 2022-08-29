@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        docker: ['debian', 'ubuntu', 'fedora']
+        docker: ['debian', 'ubuntu', 'fedora', 'redhat/ubi8']
         version: ['release-5.0-stable']
         root: ['/var/www/html/bugzilla/']
 
@@ -74,7 +74,7 @@ jobs:
                libfile-copy-recursive-perl
                libfile-which-perl
 
-      - if: ${{ contains(matrix.docker, 'fedora') }}
+      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
         name: Install Bugzilla depencencies
         run: dnf -y install
                httpd
@@ -139,14 +139,22 @@ jobs:
                'perl(XMLRPC::Lite)'
                'perl(XML::Twig)'
 
-      - if: ${{ matrix.version }}
+      - if: ${{ ( matrix.version && contains(fromJson('["ubuntu", "debian"]'), matrix.docker) ) }}
         name: Install Apache config
-        env:
-          debian_CONFIG: /etc/apache2/sites-available/bugzilla.conf
-          ubuntu_CONFIG: /etc/apache2/sites-available/bugzilla.conf
-          fedora_CONFIG: /etc/httpd/conf/httpd.conf
         run: |
-            cat << EOF >> $${{ matrix.docker }}_CONFIG
+            cat << EOF >> /etc/apache2/sites-available/bugzilla.conf
+               <Directory /var/www/html/bugzilla>
+                 AddHandler cgi-script .cgi
+                 Options +ExecCGI +FollowSymLinks
+                 DirectoryIndex index.cgi index.html
+                 AllowOverride All
+               </Directory>
+            EOF
+
+      - if: ${{ ( matrix.version && (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) ) }}
+        name: Install Apache config
+        run: |
+            cat << EOF >> /etc/httpd/conf/httpd.conf
                <Directory /var/www/html/bugzilla>
                  AddHandler cgi-script .cgi
                  Options +ExecCGI +FollowSymLinks
@@ -167,11 +175,11 @@ jobs:
         name: Start and run Apache in the background
         run: apachectl start
 
-      - if: ${{ contains(matrix.docker, 'fedora') }}
+      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
         name: Start and run Apache in the background
         run: httpd
 
-      - if: ${{ contains(matrix.docker, 'fedora') }}
+      - if: ${{ ( contains(matrix.docker, 'fedora')|| contains(matrix.docker, 'redhat') ) }}
         name: Prepare the database
         run: su -c "mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql && mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh mysql
 
@@ -198,7 +206,7 @@ jobs:
         name: Set web server group config
         run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"www-data\";/g" {0}/localconfig', matrix.root) }}
 
-      - if: ${{ contains(matrix.docker, 'fedora') }}
+      - if: ${{ ( contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
         name: Set web server group config
         run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"apache\";/g" {0}/localconfig', matrix.root) }}
 
