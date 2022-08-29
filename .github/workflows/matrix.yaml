@@ -19,6 +19,8 @@ jobs:
         exclude:
           - docker: 'debian'
             version: 'release-4.4-stable'
+          - docker: 'ubuntu'
+            version: 'release-4.4-stable'
 
     container: ${{ matrix.docker }}
 
