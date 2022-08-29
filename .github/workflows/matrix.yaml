@@ -96,6 +96,7 @@ jobs:
                'perl(JSON::XS)'
                'perl(List::MoreUtils)'
                'perl(Math::Random::ISAAC)'
+               'perl(Memoize)'
                'perl(Safe)'
                'perl(Template)'
                'perl(URI)'
