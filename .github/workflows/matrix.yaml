@@ -94,6 +94,7 @@ jobs:
                'perl(Digest::SHA)'
                'perl(Email::MIME)'
                'perl(Email::Sender)'
+               'perl(fields)'
                'perl(JSON::XS)'
                'perl(List::MoreUtils)'
                'perl(Math::Random::ISAAC)'
