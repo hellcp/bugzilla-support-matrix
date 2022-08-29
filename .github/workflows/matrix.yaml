@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        docker: ['debian', 'ubuntu', 'fedora', 'quay.io/centos/centos']
+        docker: ['debian', 'ubuntu', 'fedora', 'quay.io/centos/centos:stream8']
         version: ['release-5.0-stable']
         root: ['/var/www/html/bugzilla/']
 
