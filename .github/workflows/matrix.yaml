@@ -40,6 +40,7 @@ jobs:
                liblist-moreutils-perl
                libmath-random-isaac-perl
                libjson-xs-perl
+               libdbd-mysql-perl
                perlmagick
                lynx
                graphviz
