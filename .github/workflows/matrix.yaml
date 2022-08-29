@@ -1,5 +1,5 @@
 
-name: Build and Test
+name: Install and Test
 
 on:
   push:
@@ -8,29 +8,23 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_test:
+  install_and_test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        docker: ['centos', 'fedora', 'debian', 'ubuntu']
+        docker: ['debian', 'ubuntu', 'fedora']
+        version: ['release-4.4-stable', 'release-5.0-stable', '5.2']
         root: ['/var/www/html/bugzilla/']
-        version: ['4.4', '5.0', '5.2', 'harmony']
-        # The distributions below have their own bugzilla packages, so we test those without per version checks
-        include:
-          - docker: 'opensuse/tumbleweed'
-            root: '/srv/www/bugzilla/'
-          - docker: 'opensuse/leap'
-            root: '/srv/www/bugzilla/'
-          - docker: 'gentoo/portage'
-            root: '/var/www/html/bugzilla/'
 
     container: ${{ matrix.docker }}
 
     steps:
-      - if: ${{ (matrix.docker == 'ubuntu' || matrix.docker == 'debian') }}
-        run: apt install -y 
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Install Bugzilla depencencies
+        run: apt -y update && DEBIAN_FRONTEND=noninteractive apt -y install 
                apache2
+               git
                mariadb-server
                libappconfig-perl
                libdate-calc-perl
@@ -71,28 +65,31 @@ jobs:
                libhtml-formattext-withlinks-perl
                libfile-which-perl
                libgd-dev
-               libmysqlclient-dev
+               libmariadbclient-dev-compat
                libemail-address-perl
                lynx
                graphviz
                python3-sphinx
-               rst2pdf               
+               rst2pdf
 
-      - if: ${{ (matrix.docker == 'centos' || matrix.docker == 'fedora') }}
+      - if: ${{ contains(matrix.docker, 'fedora') }}
+        name: Install Bugzilla depencencies
         run: dnf -y install
                httpd
-               mysql-server
+               git
+               mariadb-server
                mod_perl
                mod_perl-devel
                httpd-devel
                gd-devel
-               mysql-devel
+               mariadb-devel
                graphviz
                patchutils
                gcc
                'perl(Apache2::SizeLimit)'
                'perl(Authen::Radius)'
                'perl(Authen::SASL)'
+               'perl(autodie)'
                'perl(Cache::Memcached)'
                'perl(CGI)'
                'perl(Chart::Lines)'
@@ -100,6 +97,7 @@ jobs:
                'perl(Date::Format)'
                'perl(DateTime)'
                'perl(DateTime::TimeZone)'
+               'perl(DBD::mysql)'
                'perl(DBI)'
                'perl(Digest::SHA)'
                'perl(Email::MIME)'
@@ -120,11 +118,13 @@ jobs:
                'perl(List::MoreUtils)'
                'perl(LWP::UserAgent)'
                'perl(Math::Random::ISAAC)'
+               'perl(Memoize)'
                'perl(MIME::Parser)'
                'perl(mod_perl2)'
                'perl(Net::LDAP)'
                'perl(Net::SMTP::SSL)'
                'perl(PatchReader)'
+               'perl(Safe)'
                'perl(SOAP::Lite)'
                'perl(Template)'
                'perl(Template::Plugin::GD::Image)'
@@ -134,8 +134,76 @@ jobs:
                'perl(XMLRPC::Lite)'
                'perl(XML::Twig)'
 
-      - if: ${{ startsWith(matrix.docker, 'gentoo')}}
-        run: emerge -av bugzilla
+      - if: ${{ matrix.version }}
+        name: Install Apache config
+        env:
+          debian_CONFIG: /etc/apache2/sites-available/bugzilla.conf
+          ubuntu_CONFIG: /etc/apache2/sites-available/bugzilla.conf
+          fedora_CONFIG: /etc/httpd/conf/httpd.conf
+        run: |
+            cat << EOF >> $${{ matrix.docker }}_CONFIG
+               <Directory /var/www/html/bugzilla>
+                 AddHandler cgi-script .cgi
+                 Options +ExecCGI +FollowSymLinks
+                 DirectoryIndex index.cgi index.html
+                 AllowOverride All
+               </Directory>
+            EOF
 
-      - if: ${{ startsWith(matrix.docker, 'opensuse') }}
-        run: zypper -n install bugzilla bugzilla-apache
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Enable apache modules
+        run: a2enmod cgi headers expires
+
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Add the bugzilla site
+        run: a2ensite bugzilla
+
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Start and run Apache in the background
+        run: apachectl start
+
+      - if: ${{ contains(matrix.docker, 'fedora') }}
+        name: Start and run Apache in the background
+        run: httpd
+
+      - if: ${{ contains(matrix.docker, 'fedora') }}
+        name: Prepare the database
+        run: su -c "mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh mysql
+
+      - name: Create bugs user with password
+        run: |
+          while( ! mysqladmin ping ); do sleep 1; cat /var/log/mysql/mysqld.log; done
+          mysql -u root -e "GRANT ALL PRIVILEGES ON bugs.* TO bugs@localhost IDENTIFIED BY '4ab75f1f4874be5c'"
+
+      - if: ${{ matrix.version }}
+        name: Clone Bugzilla ${{ matrix.version }}
+        run: ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
+
+      - name: Create config
+        run: cd ${{ matrix.root }} && ./checksetup.pl
+
+      - name: Set db password
+        run: ${{ format('sed -i "s/db_pass.*/db_pass=\"4ab75f1f4874be5c\";/g" {0}/localconfig', matrix.root) }}
+
+      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+        name: Set web server group config
+        run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"www-data\";/g" {0}/localconfig', matrix.root) }}
+
+      - if: ${{ contains(matrix.docker, 'fedora') }}
+        name: Set web server group config
+        run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"apache\";/g" {0}/localconfig', matrix.root) }}
+
+      - name: Non interactive config setup
+        run: |
+            cat << EOF >> ${{ matrix.root }}.setup
+            \$answer{'ADMIN_EMAIL'} = 'test@bugzilla.org';
+            \$answer{'ADMIN_PASSWORD'} = 'test1234';
+            \$answer{'ADMIN_REALNAME'} = 'Test McTestface';
+            \$answer{'NO_PAUSE'} = 1
+            EOF
+
+      - name: Check config
+        run: cd ${{ matrix.root }} && ./checksetup.pl .setup
+
+      - name: Test server
+        run: cd ${{ matrix.root }} && ./testserver.pl http://localhost/bugzilla
