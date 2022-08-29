@@ -67,7 +67,7 @@ jobs:
                libgd-dev
                libmariadbclient-dev-compat
                libemail-address-perl
-               libemail-send-perl
+               libemail-sender-perl
                lynx
                graphviz
                python3-sphinx
