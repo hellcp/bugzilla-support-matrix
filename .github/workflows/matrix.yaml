@@ -114,9 +114,6 @@ jobs:
                'perl(Authen::Radius)'
                'perl(Authen::SASL)'
                'perl(Cache::Memcached)'
-               'perl(Chart::Lines)'
-               'perl(Daemon::Generic)'
-               'perl(Email::Reply)'
                'perl(Encode)'
                'perl(Encode::Detect)'
                'perl(File::Copy::Recursive)'
@@ -125,7 +122,6 @@ jobs:
                'perl(GD)'
                'perl(GD::Graph)'
                'perl(GD::Text)'
-               'perl(HTML::FormatText::WithLinks)'
                'perl(HTML::Parser)'
                'perl(HTML::Scrubber)'
                'perl(IO::Scalar)'
@@ -135,13 +131,21 @@ jobs:
                'perl(mod_perl2)'
                'perl(Net::LDAP)'
                'perl(Net::SMTP::SSL)'
-               'perl(PatchReader)'
                'perl(SOAP::Lite)'
-               'perl(Template::Plugin::GD::Image)'
                'perl(Test::Taint)'
-               'perl(TheSchwartz)'
                'perl(XMLRPC::Lite)'
                'perl(XML::Twig)'
+
+      - if: ${{ contains(matrix.docker, 'fedora') ) }}
+        name: Install extra optional Bugzilla depencencies
+        run: dnf -y install
+               'perl(Chart::Lines)'
+               'perl(Daemon::Generic)'
+               'perl(Email::Reply)'
+               'perl(HTML::FormatText::WithLinks)'
+               'perl(PatchReader)'
+               'perl(Template::Plugin::GD::Image)'
+               'perl(TheSchwartz)'
 
       - if: ${{ ( matrix.version && contains(fromJson('["ubuntu", "debian"]'), matrix.docker) ) }}
         name: Install Apache config
