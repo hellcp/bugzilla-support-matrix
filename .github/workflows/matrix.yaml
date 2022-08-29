@@ -16,6 +16,9 @@ jobs:
         docker: ['debian', 'ubuntu', 'fedora']
         version: ['release-4.4-stable', 'release-5.0-stable', '5.2']
         root: ['/var/www/html/bugzilla/']
+        exclude:
+          - docker: 'debian'
+            version: 'release-4.4-stable'
 
     container: ${{ matrix.docker }}
 
