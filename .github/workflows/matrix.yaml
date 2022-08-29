@@ -42,11 +42,6 @@ jobs:
                libmath-random-isaac-perl
                libjson-xs-perl
                libdbd-mysql-perl
-               perlmagick
-               lynx
-               graphviz
-               python3-sphinx
-               rst2pdf
 
       - if: ${{ contains(matrix.docker, 'fedora') }}
         name: Install Bugzilla depencencies
