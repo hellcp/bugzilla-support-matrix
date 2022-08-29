@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        docker: ['debian', 'ubuntu', 'fedora', 'redhat/ubi8']
+        docker: ['debian', 'ubuntu', 'fedora', 'quay.io/centos/centos']
         version: ['release-5.0-stable']
         root: ['/var/www/html/bugzilla/']
 
@@ -74,7 +74,7 @@ jobs:
                libfile-copy-recursive-perl
                libfile-which-perl
 
-      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
+      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) }}
         name: Install Bugzilla depencencies
         run: dnf -y install
                httpd
@@ -151,7 +151,7 @@ jobs:
                </Directory>
             EOF
 
-      - if: ${{ ( matrix.version && (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) ) }}
+      - if: ${{ ( matrix.version && (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) ) }}
         name: Install Apache config
         run: |
             cat << EOF >> /etc/httpd/conf/httpd.conf
@@ -175,11 +175,11 @@ jobs:
         name: Start and run Apache in the background
         run: apachectl start
 
-      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
+      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) }}
         name: Start and run Apache in the background
         run: httpd
 
-      - if: ${{ ( contains(matrix.docker, 'fedora')|| contains(matrix.docker, 'redhat') ) }}
+      - if: ${{ ( contains(matrix.docker, 'fedora')|| contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) }}
         name: Prepare the database
         run: su -c "mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql && mariadbd-safe --port 3307 --skip-syslog &" -s /bin/sh mysql
 
@@ -206,7 +206,7 @@ jobs:
         name: Set web server group config
         run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"www-data\";/g" {0}/localconfig', matrix.root) }}
 
-      - if: ${{ ( contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') ) }}
+      - if: ${{ ( contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) }}
         name: Set web server group config
         run: ${{ format('sed -i "s/webservergroup.*/webservergroup=\"apache\";/g" {0}/localconfig', matrix.root) }}
 
