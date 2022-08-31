@@ -24,7 +24,7 @@ jobs:
         name: Add epel to centos
         run: dnf -y config-manager --set-enabled powertools && dnf -y install epel-release epel-next-release
 
-      - if: ${{ contains(fromJson('["ubuntu", "debian"]'), matrix.docker) }}
+      - if: ${{ (contains(fromJson('["ubuntu", "debian"]'), matrix.docker) && matrix.version != 'harmony') }}
         name: Install Bugzilla depencencies
         run: apt -y update && DEBIAN_FRONTEND=noninteractive apt -y install 
                apache2
@@ -82,36 +82,13 @@ jobs:
       - if: ${{ (contains(fromJson('["ubuntu", "debian"]'), matrix.docker) && matrix.version == 'harmony' ) }}
         name: Install Bugzilla depencencies
         run: apt -y update && DEBIAN_FRONTEND=noninteractive apt -y install 
-               libcrypt-cbc-perl
-               libcrypt-des-perl
-               libcrypt-des-ede3-perl
-               libdbix-class-perl
-               libdbix-class-helpers-perl
-               libdevel-nytprof-perl
-               libffi-platypus-perl
-               libfuture-perl
-               libhtml-escape-perl
-               libio-async-perl
-               libjson-validator-perl
-               liblwp-useragent-determined-perl
-               libmojo-jwt-perl
-               libmojolicious-perl
-               libmoox-strictconstructor-perl
-               libnet-dns-perl
-               libperlx-maybe-perl
-               libpod-coverage-trustpod-perl
-               libregexp-common-perl
-               libscope-guard-perl
-               libsereal-perl
-               libtest-cpan-meta-perl
-               libtest-pod-perl
-               libtest-pod-coverage-perl
-               libtext-csv-xs-perl
-               libtext-diff-perl
-               libtype-tiny-perl
-               liburi-escape-xs-perl
+               apache2
+               git
+               build-essential
+               mariadb-server
+               cpanminus
 
-      - if: ${{ (contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos') ) }}
+      - if: ${{ ((contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos'))  && matrix.version != 'harmony' ) }}
         name: Install Bugzilla depencencies
         run: dnf -y install
                httpd
@@ -173,38 +150,18 @@ jobs:
       - if: ${{ (contains(matrix.docker, 'fedora') && matrix.version == 'harmony' ) }}
         name: Install Harmony depencencies
         run: dnf -y install
-               'perl(Algorithm::BloomFilter)'
-               'perl(Crypt::CBC)'
-               'perl(Crypt::DES)'
-               'perl(Crypt::DES_EDE3)'
-               'perl(DBIx::Class)'
-               'perl(DBIx::Class::Helpers)'
-               'perl(Devel::NYTProf)'
-               'perl(Email::Send)'
-               'perl(FFI::Platypus)'
-               'perl(Future)'
-               'perl(HTML::Escape)'
-               'perl(IO::Async)'
-               'perl(JSON::Validator)'
-               'perl(LWP::UserAgent::Determined)'
-               'perl(Mojo::JWT)'
-               'perl(MojoX::Log::Log4perl)'
-               'perl(Mojolicious)'
-               'perl(MooX::StrictConstructor)'
-               'perl(Mozilla::CA)'
-               'perl(Net::DNS)'
-               'perl(PerlX::Maybe)'
-               'perl(Pod::Coverage::TrustPod)'
-               'perl(Regexp::Common)'
-               'perl(Scope::Guard)'
-               'perl(Sereal)'
-               'perl(Test::CPAN::Meta)'
-               'perl(Test::Pod)'
-               'perl(Test::Pod::Coverage)'
-               'perl(Text::CSV_XS)'
-               'perl(Text::Diff)'
-               'perl(Type::Tiny)'
-               'perl(URI::Escape::XS)'
+               httpd
+               git
+               mariadb-server
+               mod_perl
+               mod_perl-devel
+               httpd-devel
+               mariadb-devel
+               gcc
+               gd-devel
+               graphviz
+               patchutils
+               cpanminus
 
       - if: ${{ contains(matrix.docker, 'fedora') }}
         name: Install extra optional Bugzilla depencencies
@@ -282,7 +239,7 @@ jobs:
         name: Clone Bugzilla ${{ matrix.version }}
         run: ${{ format('git clone https://github.com/bugzilla/harmony {1}', matrix.version, matrix.root) }}
 
-      - if: ${{ (contains(fromJson('["ubuntu", "debian"]'), matrix.docker) && matrix.version == 'harmony' ) }}
+      - if: ${{ matrix.version == 'harmony' }}
         name: Install additional dependencies
         run: cd ${{ matrix.root }} && cpanm --installdeps .
 
