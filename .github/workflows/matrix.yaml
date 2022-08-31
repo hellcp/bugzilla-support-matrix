@@ -211,7 +211,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
         run: |
-          if [ VERSION -eq "harmony" ]; then
+          if [ VERSION == "harmony" ]; then
             ${{ format('git clone https://github.com/bugzilla/harmony {1}', matrix.version, matrix.root) }}
           else
             ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
