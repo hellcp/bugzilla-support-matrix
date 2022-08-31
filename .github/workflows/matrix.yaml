@@ -206,16 +206,13 @@ jobs:
         name: Create database bugs
         run: mysql -u bugs -p'4ab75f1f4874be5c' -e "CREATE DATABASE bugs CHARACTER SET = 'utf8'"
 
-      - if: ${{ matrix.version }}
+      - if: ${{ matrix.version != 'harmony' }}
         name: Clone Bugzilla ${{ matrix.version }}
-        env:
-          VERSION: ${{ matrix.version }}
-        run: |
-          if [ "$VERSION" == "harmony" ]; then
-            ${{ format('git clone https://github.com/bugzilla/harmony {1}', matrix.version, matrix.root) }}
-          else
-            ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
-          fi
+        run: ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
+
+      - if: ${{ matrix.version == 'harmony' }}
+        name: Clone Bugzilla ${{ matrix.version }}
+        run: ${{ format('git clone https://github.com/bugzilla/harmony {1}', matrix.version, matrix.root) }}
 
       - name: Create config
         run: cd ${{ matrix.root }} && ./checksetup.pl
