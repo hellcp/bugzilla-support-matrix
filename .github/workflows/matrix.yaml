@@ -202,6 +202,10 @@ jobs:
           while( ! mysqladmin ping ); do sleep 1; date; done
           mysql -u root -e "GRANT ALL PRIVILEGES ON bugs.* TO bugs@localhost IDENTIFIED BY '4ab75f1f4874be5c'"
 
+      - if: ${{ contains(matrix.version, '5.2') }}
+        name: Create database bugs
+        run: mysql -u bugs -p'4ab75f1f4874be5c' -e "CREATE DATABASE bugs CHARACTER SET = 'utf8'"
+
       - if: ${{ matrix.version }}
         name: Clone Bugzilla ${{ matrix.version }}
         run: ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
