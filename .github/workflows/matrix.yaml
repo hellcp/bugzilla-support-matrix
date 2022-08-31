@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         docker: ['debian', 'ubuntu', 'fedora']
-        version: ['5.2']
+        version: ['release-5.0-stable', '5.2', 'harmony']
         root: ['/var/www/html/bugzilla/']
 
     container: ${{ matrix.docker }}
@@ -208,7 +208,14 @@ jobs:
 
       - if: ${{ matrix.version }}
         name: Clone Bugzilla ${{ matrix.version }}
-        run: ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
+        env:
+          VERSION: ${{ matrix.version }}
+        run: |
+          if [ VERSION -eq "harmony" ]; then
+            ${{ format('git clone https://github.com/bugzilla/harmony {1}', matrix.version, matrix.root) }}
+          else
+            ${{ format('git clone --branch {0} https://github.com/bugzilla/bugzilla {1}', matrix.version, matrix.root) }}
+          fi
 
       - name: Create config
         run: cd ${{ matrix.root }} && ./checksetup.pl
