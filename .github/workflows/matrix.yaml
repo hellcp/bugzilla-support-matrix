@@ -284,7 +284,7 @@ jobs:
 
       - if: ${{ (contains(fromJson('["ubuntu", "debian"]'), matrix.docker) && matrix.version == 'harmony' ) }}
         name: Install additional dependencies
-        run: cd ${{ matrix.root }} && ./install-module.pl Algorithm::BloomFilter Email::Send MojoX::Log::Log4perl Mozilla::CA
+        run: cd ${{ matrix.root }} && perl ./install-module.pl Algorithm::BloomFilter Email::Send MojoX::Log::Log4perl Mozilla::CA
 
       - name: Create config
         run: cd ${{ matrix.root }} && ./checksetup.pl
