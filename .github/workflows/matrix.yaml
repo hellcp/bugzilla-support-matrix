@@ -32,6 +32,7 @@ jobs:
                build-essential
                mariadb-server
                libcgi-pm-perl
+               libdbix-connector-perl
                libdigest-sha-perl
                libtimedate-perl
                libdatetime-perl
@@ -96,6 +97,7 @@ jobs:
                'perl(DateTime::TimeZone)'
                'perl(DBI)'
                'perl(DBD::mysql)'
+               'perl(DBIx::Connector)'
                'perl(Digest::SHA)'
                'perl(Email::MIME)'
                'perl(Email::Sender)'
