@@ -235,7 +235,6 @@ jobs:
                'perl(Test::LongString)'
                'perl(SUPER)'
                'perl(Test::MockModule)'
-               'perl(Selenium::Remote::Driver)'
                'perl(File::ShareDir::Install)'
                'perl(Test::Requires)'
                'perl(Test::SharedFork)'
@@ -249,8 +248,6 @@ jobs:
                'perl(Perl::Critic::Policy)'
                'perl(Pod::MinimumVersion)'
                'perl(Perl::Critic::Pulp)'
-               'perl(Mojolicious::Plugin::ForwardedFor)'
-               'perl(Crypt::RIPEMD160)'
                'perl(Crypt::Twofish)'
                'perl(Data::Buffer)'
                'perl(Crypt::DSA)'
@@ -263,11 +260,7 @@ jobs:
                'perl(Digest::MD2)'
                'perl(Class::Loader)'
                'perl(Convert::ASCII::Armour)'
-               'perl(Sort)'
-               'perl(Math::Prime::Util)'
-               'perl(Alt::Crypt::RSA::BigInt)'
                'perl(Crypt::Rijndael)'
-               'perl(Crypt::OpenPGP)'
                'perl(Perl::Critic)'
 
       - if: ${{ contains(matrix.docker, 'fedora') }}
