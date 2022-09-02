@@ -341,7 +341,7 @@ jobs:
 
       - if: ${{ matrix.version == 'harmony' }}
         name: Install additional dependencies
-        run: cd ${{ matrix.root }} && cpanm --installdeps .
+        run: cd ${{ matrix.root }} && cpanm -l local --with-feature=bmo --installdeps --notest .
 
       - name: Create config
         run: cd ${{ matrix.root }} && ./checksetup.pl
