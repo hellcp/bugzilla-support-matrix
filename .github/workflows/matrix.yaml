@@ -129,6 +129,8 @@ jobs:
                libjson-rpc-perl
                libjson-validator-perl
                libjson-xs-perl
+               libtemplate-plugin-gd-perl
+               
 
       - if: ${{ ((contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos'))  && matrix.version != 'harmony' ) }}
         name: Install Bugzilla depencencies
