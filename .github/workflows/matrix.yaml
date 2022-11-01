@@ -87,6 +87,48 @@ jobs:
                build-essential
                mariadb-server
                cpanminus
+               libcrypt-cbc-perl
+               libdatetime-format-mysql-perl
+               libtest-www-selenium-perl
+               libthrowable-perl
+               libbytes-random-secure-perl
+               libcapture-tiny-perl
+               libcgi-compile-perl
+               libcgi-emulate-psgi-perl
+               libclass-loader-perl
+               libclass-xsaccessor-perl
+               libconvert-ascii-armour-perl
+               libcrypt-blowfish-perl
+               libcrypt-cast5-perl
+               libcrypt-des-perl
+               libcrypt-des-ede3-perl
+               libcrypt-dsa-perl
+               libcrypt-rijndael-perl
+               libcrypt-smime-perl
+               libcrypt-twofish-perl
+               libdata-buffer-perl
+               libdatetime-perl
+               libdatetime-timezone-perl
+               libdbd-mysql-perl
+               libdbix-class-perl
+               libdbix-class-helpers-perl
+               libdbix-connector-perl
+               libdevel-nytprof-perl
+               libdigest-md2-perl
+               libev-perl
+               libextutils-config-perl
+               libextutils-helpers-perl
+               libextutils-installpaths-perl
+               libffi-platypus-perl
+               libfile-mimeinfo-perl
+               libfile-sharedir-install-perl
+               libfuture-perl
+               libhtml-escape-perl
+               libio-async-perl
+               libjson-maybexs-perl
+               libjson-rpc-perl
+               libjson-validator-perl
+               libjson-xs-perl
 
       - if: ${{ ((contains(matrix.docker, 'fedora') || contains(matrix.docker, 'redhat') || contains(matrix.docker, 'centos'))  && matrix.version != 'harmony' ) }}
         name: Install Bugzilla depencencies
